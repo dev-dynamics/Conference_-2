@@ -85,26 +85,65 @@ def simulate_logic_error():
     except Exception:
         collector.capture_exception(*sys.exc_info(), label="Logic_Calculation_Error")
 
-# --- ГЛАВНЫЙ ЦИКЛ ГЕНЕРАЦИИ ---
+
+
+# ... (импорты и предыдущий код остаются) ...
+
+# --- НОВЫЙ СЦЕНАРИЙ 4: Ошибки Файловой Системы ---
+def simulate_file_error():
+    paths = ['/var/log/syslog', 'C:/Users/Admin/secret.txt', './config.json']
+    modes = ['r', 'w', 'rb']
+    encodings = ['utf-8', 'cp1251']
+    
+    path = random.choice(paths)
+    mode = random.choice(modes)
+    
+    try:
+        # Контекст: пути, режимы чтения, кодировки
+        current_encoding = random.choice(encodings)
+        if random.random() > 0.5:
+            raise FileNotFoundError(f"No such file or directory: '{path}'")
+        else:
+            raise PermissionError(f"Permission denied: '{path}'")
+    except Exception:
+        # Метка класса: FileSystem_Error
+        collector.capture_exception(*sys.exc_info(), label="FileSystem_Error")
+
+# --- НОВЫЙ СЦЕНАРИЙ 5: Ошибки Безопасности/Доступа ---
+def simulate_auth_error():
+    roles = ['guest', 'anonymous', 'user']
+    tokens = ['expired_token_xyz', 'invalid_signature', 'None']
+    endpoints = ['/api/v1/admin', '/settings/billing', '/root']
+    
+    user_role = random.choice(roles)
+    auth_token = random.choice(tokens)
+    endpoint = random.choice(endpoints)
+    
+    try:
+        # Контекст: роли, токены, защищенные пути
+        if user_role == 'guest':
+            raise PermissionError(f"User with role '{user_role}' cannot access {endpoint}")
+        else:
+            # Имитируем кастомную ошибку авторизации
+            raise RuntimeError(f"403 Forbidden: Invalid token {auth_token}")
+    except Exception:
+        # Метка класса: Security_Auth_Error
+        collector.capture_exception(*sys.exc_info(), label="Security_Auth_Error")
+
+# --- ОБНОВЛЕННЫЙ ГЛАВНЫЙ ЦИКЛ ---
 def generate_dataset(samples=1000):
-    print(f"Начинаем генерацию {samples} примеров...")
+    print(f"Начинаем генерацию {samples} примеров (включая новые типы)...")
     
     for i in range(samples):
-        # Случайно выбираем тип ошибки, чтобы данные были перемешаны
-        choice = random.choice([1, 2, 3])
+        choice = random.choice([1, 2, 3, 4, 5]) # Теперь 5 вариантов!
         
-        if choice == 1:
-            simulate_db_error()
-        elif choice == 2:
-            simulate_validation_error()
-        elif choice == 3:
-            simulate_logic_error()
+        if choice == 1: simulate_db_error()
+        elif choice == 2: simulate_validation_error()
+        elif choice == 3: simulate_logic_error()
+        elif choice == 4: simulate_file_error() # Новый
+        elif choice == 5: simulate_auth_error() # Новый
             
-        if i % 100 == 0:
-            print(f"Сгенерировано {i} записей...")
-            
-    print("Готово! Данные сохранены в error_dataset.csv")
+    print("Готово! Данные обновлены.")
 
 if __name__ == "__main__":
-    # Генерируем 1000 примеров
-    generate_dataset(1000)
+    generate_dataset(5000) # Генерируем чуть больше данных

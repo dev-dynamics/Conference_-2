@@ -1,9 +1,11 @@
                          precision    recall  f1-score   support
 
-         Database_Error       1.00      1.00      1.00        76
-Logic_Calculation_Error       1.00      1.00      1.00        67
-       Validation_Error       1.00      1.00      1.00        57
+         Database_Error       1.00      1.00      1.00       195
+       FileSystem_Error       1.00      1.00      1.00       190
+Logic_Calculation_Error       1.00      1.00      1.00       204
+    Security_Auth_Error       1.00      1.00      1.00       189
+       Validation_Error       1.00      1.00      1.00       222
 
-               accuracy                           1.00       200
-              macro avg       1.00      1.00      1.00       200
-           weighted avg       1.00      1.00      1.00       200
+               accuracy                           1.00      1000
+              macro avg       1.00      1.00      1.00      1000
+           weighted avg       1.00      1.00      1.00      1000
